@@ -6,7 +6,7 @@ const mockArticleData: ArticleData = {
     level: 3,
     title: "Sample Article",
     content: "This is a sample article content.",
-    questions: ["Question 1", "Question 2", "Question 3"],
+    question: "how did you feel about this article?",
     answers: ["Answer 1", "Answer 2", "Answer 3"]
 };
 

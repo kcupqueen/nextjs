@@ -13,12 +13,12 @@ export type ArticleData = {
     level: number,
     title: string;
     content: string;
-    questions: string[];
+    question: string;
     answers: string[];
 }
 
 function Article({ data }: { data: ArticleData }) {
-    const { title, content, questions, answers } = data;
+    const { title, content, question, answers } = data;
     return (
         <>
             <div
@@ -27,7 +27,7 @@ function Article({ data }: { data: ArticleData }) {
                 <p className="text-gray-700 mt-2">{content}</p>
             </div>
             <div>
-                <RadioGroup answers={answers} questions={questions}/>
+                <RadioGroup answers={answers} question={question}/>
             </div>
         </>
     );
@@ -35,7 +35,7 @@ function Article({ data }: { data: ArticleData }) {
 
 
 
-const RadioGroup = ({ questions, answers }: { questions: string[], answers: string[] }) => {
+const RadioGroup = ({ question, answers }: { question: string, answers: string[] }) => {
     const [selectedOption, setSelectedOption] = useState('');
     const links = [
         {name: 'Next', href: '#', icon: ArrowRightIcon},
@@ -46,9 +46,9 @@ const RadioGroup = ({ questions, answers }: { questions: string[], answers: stri
     };
     const LinkIcon = link.icon;
 
-    const radioButtons = questions.map((question, index) => {
+    const radioButtons = answers.map((ans, index) => {
         return (
-            <label key={question} className="flex items-center">
+            <label key={ans} className="flex items-center">
                 <input
                     type="radio"
                     value={answers[index]}
@@ -56,14 +56,14 @@ const RadioGroup = ({ questions, answers }: { questions: string[], answers: stri
                     onChange={handleOptionChange}
                     className="form-radio text-indigo-600 focus:ring-indigo-500 h-4 w-4"
                 />
-                <span className="ml-2">{question}</span>
+                <span className="ml-2">{ans}</span>
             </label>
         );
     });
 
     return (
         <div className="flex flex-col space-y-2">
-            <label className="font-bold">Select an option:</label>
+            <label className="font-bold">{question}</label>
             <div className="flex flex-col space-y-2">
                 {radioButtons}
             </div>
