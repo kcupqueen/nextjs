@@ -1,11 +1,14 @@
 'use client';
-import { useState,ChangeEvent } from 'react';
+import {useState, ChangeEvent} from 'react';
 import Link from 'next/link';
 import {
     UserGroupIcon,
     HomeIcon,
     ArrowRightIcon,
 } from '@heroicons/react/24/outline';
+import {  usePathname, useSearchParams } from 'next/navigation';
+
+
 import clsx from 'clsx'; // css conditional classes
 
 export type ArticleData = {
@@ -15,10 +18,11 @@ export type ArticleData = {
     content: string;
     question: string;
     answers: string[];
+    correctAnsIdx: number,
 }
 
-function Article({ data }: { data: ArticleData }) {
-    const { title, content, question, answers } = data;
+function Article({data}: { data: ArticleData }) {
+    const {title, content, question, answers, correctAnsIdx, level} = data;
     return (
         <>
             <div
@@ -27,32 +31,53 @@ function Article({ data }: { data: ArticleData }) {
                 <p className="text-gray-700 mt-2">{content}</p>
             </div>
             <div>
-                <RadioGroup answers={answers} question={question}/>
+                <RadioGroup answers={answers} question={question} correctIdx={correctAnsIdx} level={level}/>
             </div>
         </>
     );
 }
 
 
+const RadioGroup = ({question, answers, correctIdx, level}: {
+    question: string,
+    answers: string[],
+    correctIdx: number,
+    level: number
+}) => {
 
-const RadioGroup = ({ question, answers }: { question: string, answers: string[] }) => {
     const [selectedOption, setSelectedOption] = useState('');
-    const links = [
-        {name: 'Next', href: '#', icon: ArrowRightIcon},
-    ];
-    const link = links[0]
+    const [link, setLink] =
+        useState({name: 'Next', href: '#', icon: ArrowRightIcon, debug: 'fuck'});
+
+
+    let correct = false;
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+
     const handleOptionChange = (event: ChangeEvent<HTMLInputElement>) => {
         setSelectedOption(event.target.value);
-    };
-    const LinkIcon = link.icon;
+        correct = parseInt(event.target.value) === correctIdx;
+        console.log(`correct`, correct)
+        const params = new URLSearchParams(searchParams);
 
+        const nextLevel = correct ? level + 100 : level - 100;
+        params.set('level', nextLevel.toString());
+        const updatedLink = {...link};
+        updatedLink.href = `${pathname}?${params.toString()}`;
+        updatedLink.debug = `nextLevel${nextLevel};href:${updatedLink.href}`
+        console.log(`nextLevel`, nextLevel, `link.href`, updatedLink.href)
+        setLink(updatedLink);
+
+    };
+
+    const LinkIcon = link.icon;
     const radioButtons = answers.map((ans, index) => {
         return (
             <label key={ans} className="flex items-center">
                 <input
                     type="radio"
-                    value={answers[index]}
-                    checked={selectedOption === answers[index]}
+                    value={index}
+                    checked={parseInt(selectedOption) === index}
                     onChange={handleOptionChange}
                     className="form-radio text-indigo-600 focus:ring-indigo-500 h-4 w-4"
                 />
@@ -67,7 +92,7 @@ const RadioGroup = ({ question, answers }: { question: string, answers: string[]
             <div className="flex flex-col space-y-2">
                 {radioButtons}
             </div>
-            <p className="text-gray-500">Selected option: {selectedOption}</p>
+            <p className="text-gray-500">todo delete this: {link.debug}</p>
             <div>
                 <Link
                     key={link.name}

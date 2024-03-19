@@ -3,11 +3,12 @@ import Article from "@/app/ui/default/article";
 import {ArticleData} from "@/app/ui/default/article";
 const mockArticleData: ArticleData = {
     _id: "123456",
-    level: 3,
+    level: 700,
     title: "Sample Article",
     content: "This is a sample article content.",
     question: "how did you feel about this article?",
-    answers: ["Answer 1", "Answer 2", "Answer 3"]
+    answers: ["Answer 1", "Answer 2", "Answer 3"],
+    correctAnsIdx: 0, // suppose the correct answer is the first one
 };
 
 export default function Home() {
