@@ -46,31 +46,18 @@ const RadioGroup = ({question, answers, correctIdx, level}: {
 }) => {
 
     const [selectedOption, setSelectedOption] = useState('');
-    const [link, setLink] =
-        useState({name: 'Next', href: '#', icon: ArrowRightIcon, debug: 'fuck'});
 
+    const [levelNow, setLevel] = useState(level);
 
     let correct = false;
-    const pathname = usePathname();
-    const searchParams = useSearchParams();
-
+    let nextLevel = level;
     const handleOptionChange = (event: ChangeEvent<HTMLInputElement>) => {
         setSelectedOption(event.target.value);
         correct = parseInt(event.target.value) === correctIdx;
-        console.log(`correct`, correct)
-        const params = new URLSearchParams(searchParams);
-
-        const nextLevel = correct ? level + 100 : level - 100;
-        params.set('level', nextLevel.toString());
-        const updatedLink = {...link};
-        updatedLink.href = `${pathname}?${params.toString()}`;
-        updatedLink.debug = `nextLevel${nextLevel};href:${updatedLink.href}`
-        console.log(`nextLevel`, nextLevel, `link.href`, updatedLink.href)
-        setLink(updatedLink);
-
+        nextLevel = correct ? level + 100 : level - 100;
+        setLevel(nextLevel);
     };
 
-    const LinkIcon = link.icon;
     const radioButtons = answers.map((ans, index) => {
         return (
             <label key={ans} className="flex items-center">
@@ -92,17 +79,16 @@ const RadioGroup = ({question, answers, correctIdx, level}: {
             <div className="flex flex-col space-y-2">
                 {radioButtons}
             </div>
-            <p className="text-gray-500">todo delete this: {link.debug}</p>
+            <p className="text-gray-500">Selected: {selectedOption}</p>
             <div>
-                <Link
-                    key={link.name}
-                    href={link.href}
-                    className={clsx(
-                        'flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3',
-                    )}>
-                    <LinkIcon className="w-6"/>
-                    <p className="hidden md:block">{link.name}</p>
-                </Link>
+                <button
+                    onClick={() => {
+                        // levelNow
+                        console.log('levelNow', levelNow);
+                    }}
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded">
+                    Button
+                </button>
             </div>
         </div>
     );
