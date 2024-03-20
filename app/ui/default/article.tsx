@@ -1,5 +1,6 @@
 'use client';
 import {ChangeEvent, useState} from 'react';
+import { useEffect } from 'react';
 
 
 export type ArticleData = {
@@ -27,9 +28,8 @@ let globalCacheList: ArticleData[] = []
 function Article({list, filterLevel}: { list: ArticleData[] , filterLevel: number}) {
     globalCacheList = list;
 
-    const [levelNow, setLevel] = useState(filterLevel);
 
-    const data = FilterDataCallback(list, levelNow);
+    const data = FilterDataCallback(list, filterLevel);
     const [articleObj, setArticleObj] = useState<ArticleData>(data);
     const cloned = {...articleObj};
     const {title, content, question, answers, correctAnsIdx, level} = cloned;
@@ -41,11 +41,10 @@ function Article({list, filterLevel}: { list: ArticleData[] , filterLevel: numbe
                 className="bg-white rounded-lg shadow-md p-4 md:p-6 m-4 md:m-8 flex flex-col items-center justify-center w-full">
                 <h2 className="text-xl font-semibold">{title}</h2>
                 <p className="text-gray-700 mt-2">{content}</p>
-                <p className="text-gray-700 mt-2">Level: {levelNow}</p>
             </div>
             <div>
                 <RadioGroup answers={answers} question={question}
-                            correctIdx={correctAnsIdx}  levelNow={levelNow} setLevel={setLevel}
+                            correctIdx={correctAnsIdx}  level={level}
                             setArticleObj={setArticleObj}
                 />
             </div>
@@ -54,27 +53,37 @@ function Article({list, filterLevel}: { list: ArticleData[] , filterLevel: numbe
 }
 
 
-const RadioGroup = ({question, answers, correctIdx, levelNow, setLevel, setArticleObj}: {
+const RadioGroup = ({question, answers, correctIdx, level, setArticleObj}: {
     question: string,
     answers: string[],
     correctIdx: number,
-    levelNow: number,
-    setLevel: (level: number) => void,
+    level: number,
     setArticleObj?: (obj: ArticleData) => void,
 }) => {
     const [selectedOption, setSelectedOption] = useState('');
+    let level1 = level
+    const [nextLevel, setLevelState] = useState(level1);
 
-    let correct = false;
-    let nextLevel = levelNow;
-    const handleOptionChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const HandleOptionChange = async (event: ChangeEvent<HTMLInputElement>) => {
         setSelectedOption(event.target.value);
-        correct = parseInt(event.target.value) === correctIdx;
-        nextLevel = correct ? levelNow + 100 : levelNow - 100;
-        setLevel(nextLevel);
+
+        if ( parseInt(event.target.value) === correctIdx ) {
+            // increase level
+            level1 = level + 50
+        } else {
+            // decrease level
+            level1 = level - 50
+        }
+        setLevelState(level1)
+
     };
+    useEffect(() => {
+        console.log(`useEffect->`, nextLevel)
+    })
 
     const handleOnclickOfButton = () => {
         if (setArticleObj) {
+            console.log(`button->`, nextLevel)
             FilterDataCallback(globalCacheList, nextLevel, setArticleObj);
         }
     }
@@ -87,7 +96,7 @@ const RadioGroup = ({question, answers, correctIdx, levelNow, setLevel, setArtic
                     type="radio"
                     value={index}
                     checked={parseInt(selectedOption) === index}
-                    onChange={handleOptionChange}
+                    onChange={HandleOptionChange}
                     className="form-radio text-indigo-600 focus:ring-indigo-500 h-4 w-4"
                 />
                 <span className="ml-2">{ans}</span>
