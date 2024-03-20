@@ -83,6 +83,8 @@ const RadioGroup = ({question, answers, correctIdx, level, setArticleObj}: {
 
     const handleOnclickOfButton = () => {
         if (setArticleObj) {
+            console.log(`User's choice: ${selectedOption}`);
+            // fixme calculate next level here
             console.log(`button->`, nextLevel)
             FilterDataCallback(globalCacheList, nextLevel, setArticleObj);
         }
