@@ -1,11 +1,17 @@
-import Image from "next/image";
+'use client';
 import Article from "@/app/ui/default/article";
 import GenerateMockDate from "@/app/lib/default/mock_article";
+import {useEffect} from "react";
 
 export default function Home() {
+    useEffect(() => {
+        if (typeof window !== 'undefined' && window.localStorage) {
+            localStorage.clear()
+        }
+    }, []);
+    const level = 600
+    // clear local storage
     const mockArticleData = GenerateMockDate()
-    // generate random level from 500~1000
-    const level = Math.floor(Math.random() * 500) + 500
     return (
         <main className="flex min-h-screen flex-col items-center justify-between p-5">
             <div className="flex flex-col items-center justify-start min-h-screen py-2">
