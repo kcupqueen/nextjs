@@ -49,12 +49,18 @@ function Article({list, filterLevel}: { list: ArticleData[] , filterLevel: numbe
         // log how many articles user has done
         let cnt = localStorage.getItem('articleCount')
         if (cnt) {
+            cnt = `${parseInt(cnt) + 1}`
             localStorage.setItem('articleCount', `${parseInt(localStorage.getItem('articleCount') as string) + 1}`)
         } else {
             cnt = '1'
+            console.log(`init to 1`)
             localStorage.setItem('articleCount', '1')
         }
         console.log('User has done', cnt, 'articles')
+        if (parseInt(cnt) >= 10) { // todo limit by configured threshold
+
+
+        }
     }
 
     const data = filterArticleByLevel(list, nextLevel);
