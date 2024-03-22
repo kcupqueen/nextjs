@@ -1,5 +1,5 @@
 'use client';
-import {ChangeEvent, useEffect, useState} from 'react';
+import {ChangeEvent, useState} from 'react';
 
 
 export type ArticleData = {
@@ -35,8 +35,7 @@ const getNextLevel = (currentLevel: number, ok: boolean) => {
     }
 }
 
-function Article({list, filterLevel}: { list: ArticleData[] , filterLevel: number}) {
-
+function Article({list, filterLevel}: { list: ArticleData[], filterLevel: number }) {
     // client next Level
     const [nextLevel, setLevelState] = useState(filterLevel);
 
@@ -57,8 +56,9 @@ function Article({list, filterLevel}: { list: ArticleData[] , filterLevel: numbe
             localStorage.setItem('articleCount', '1')
         }
         console.log('User has done', cnt, 'articles')
-        if (parseInt(cnt) >= 10) { // todo limit by configured threshold
-
+        if (parseInt(cnt) >= 5) { // todo limit by configured threshold
+            // route to /quizz/judgement page ？？？
+            console.log('User has done 5 articles, redirect to judgement page')
 
         }
     }
@@ -85,14 +85,19 @@ function Article({list, filterLevel}: { list: ArticleData[] , filterLevel: numbe
                 <RadioGroup article={data} onButtonClick={handleSubmitAns}
                 />
             </div>
+
         </>
+
     );
 }
 
 
-const RadioGroup = ({article, onButtonClick}:{article: ArticleData, onButtonClick: (option: number, ok: boolean,  article: ArticleData) => void}) => {
+const RadioGroup = ({article, onButtonClick}: {
+    article: ArticleData,
+    onButtonClick: (option: number, ok: boolean, article: ArticleData) => void
+}) => {
     const [selectedOption, setSelectedOption] = useState('');
-    let {question, answers, correctAnsIdx, level, } = article;
+    let {question, answers, correctAnsIdx, level,} = article;
 
     const HandleOptionChange = async (event: ChangeEvent<HTMLInputElement>) => {
         setSelectedOption(event.target.value);
