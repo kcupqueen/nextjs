@@ -1,5 +1,7 @@
 'use client';
 import {ChangeEvent, useState} from 'react';
+import { useRouter } from 'next/navigation'
+
 
 
 export type ArticleData = {
@@ -36,6 +38,8 @@ const getNextLevel = (currentLevel: number, ok: boolean) => {
 }
 
 function Article({list, filterLevel}: { list: ArticleData[], filterLevel: number }) {
+    const router = useRouter()
+
     // client next Level
     const [nextLevel, setLevelState] = useState(filterLevel);
 
@@ -59,7 +63,7 @@ function Article({list, filterLevel}: { list: ArticleData[], filterLevel: number
         if (parseInt(cnt) >= 5) { // todo limit by configured threshold
             // route to /quizz/judgement page ？？？
             console.log('User has done 5 articles, redirect to judgement page')
-
+            router.push('/quizz/judgement')
         }
     }
 
@@ -127,11 +131,13 @@ const RadioGroup = ({article, onButtonClick}: {
             </div>
             <p className="text-gray-500">Selected: {selectedOption}</p>
             <div>
+
                 <button
                     onClick={() => onButtonClick(parseInt(selectedOption), parseInt(selectedOption) === correctAnsIdx, article)}
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded">
                     Button
                 </button>
+
             </div>
         </div>
     );
