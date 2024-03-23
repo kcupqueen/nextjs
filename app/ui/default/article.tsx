@@ -14,6 +14,13 @@ export type ArticleData = {
     correctAnsIdx: number,
 }
 
+export type UserAnswerInfo = {
+    articleId: string;
+    isCorrect: boolean;
+    level: number;
+}
+
+
 const filterArticleByLevel = (list: ArticleData[], filterLevel: number) => {
     if (filterLevel < 200) {
         filterLevel = 200
@@ -42,25 +49,22 @@ function Article({list, filterLevel}: { list: ArticleData[], filterLevel: number
 
     // client next Level
     const [nextLevel, setLevelState] = useState(filterLevel);
+    const [userAnsInfos, setUserAnsInfos] = useState([] as UserAnswerInfo[]);
 
     function handleSubmitAns(option: number, ok: boolean, article: ArticleData) {
         // get user selected option
         console.log('User selected option:', option, ok);
         // update next level
         setLevelState(getNextLevel(nextLevel, ok));
-        localStorage.setItem(`articleId_${article._id}`, `${ok}:${article.level}`)
-        // log how many articles user has done
-        let cnt = localStorage.getItem('articleCount')
-        if (cnt) {
-            cnt = `${parseInt(cnt) + 1}`
-            localStorage.setItem('articleCount', `${parseInt(localStorage.getItem('articleCount') as string) + 1}`)
-        } else {
-            cnt = '1'
-            console.log(`init to 1`)
-            localStorage.setItem('articleCount', '1')
-        }
-        console.log('User has done', cnt, 'articles')
-        if (parseInt(cnt) >= 5) { // todo limit by configured threshold
+        // save user answer info
+        setUserAnsInfos([...userAnsInfos, {
+            articleId: article._id,
+            isCorrect: ok,
+            level: article.level
+        }])
+        console.log(`cnt of userAnsInfos`, userAnsInfos.length)
+
+        if (userAnsInfos?.length >= 5) { // todo limit by configured threshold
             // route to /quizz/judgement page ？？？
             console.log('User has done 5 articles, redirect to judgement page')
             router.push('/quizz/judgement')
