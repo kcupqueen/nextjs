@@ -1,5 +1,5 @@
 'use client';
-import {ChangeEvent, useState} from 'react';
+import {ChangeEvent, useEffect, useState} from 'react';
 import { useRouter } from 'next/navigation'
 
 
@@ -44,7 +44,7 @@ const getNextLevel = (currentLevel: number, ok: boolean) => {
     }
 }
 
-function Article({list, filterLevel}: { list: ArticleData[], filterLevel: number }) {
+function Article({list, filterLevel}: { list: ArticleData[], filterLevel: number}) {
     const router = useRouter()
 
     // client next Level
@@ -66,7 +66,9 @@ function Article({list, filterLevel}: { list: ArticleData[], filterLevel: number
 
         if (userAnsInfos?.length >= 5) { // todo limit by configured threshold
             // route to /quizz/judgement page ？？？
-            console.log('User has done 5 articles, redirect to judgement page')
+            console.log(`user ans list is`, JSON.stringify(userAnsInfos))
+
+            localStorage.setItem('userAnsInfos', JSON.stringify(userAnsInfos))
             router.push('/quizz/judgement')
         }
     }
