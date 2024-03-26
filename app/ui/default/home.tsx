@@ -1,6 +1,12 @@
 // temporary home page 2024-03-24
 import Image from 'next/image';
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import config from "@/app/config";
+import {
+    encode, decode, trim,
+    isBase64, isUrlSafeBase64
+} from 'url-safe-base64'
+import {btoa} from "node:buffer";
 
 function GetBackGroundImage() {
     return (
@@ -32,20 +38,13 @@ const i18nInstructions = {
 const levelIntArr = [300, 600, 900]
 
 function DropDown({title, items}: { title: string, items: string[] }) {
-    const router = useRouter()
-
-    const NavigateToQuiz = (level: number) => {
-        console.log(`NavigateToQuiz`, level)
-        localStorage.setItem('levelStart', level.toString())
-        router.push(`/quizz`)
-    }
 
     const li = items.map((item, i) => {
-        return <li key={i} value={i} style={{fontWeight: 'bold', color: 'black'}} onClick={(item) => {
-            const v = item.currentTarget.getAttribute('value')
-            console.log(`click`, v)
-            v && NavigateToQuiz(levelIntArr[parseInt(v)])
-        }}><a>{item}</a></li>
+        const q = encode(btoa(`${config.queryKey}${levelIntArr[i]}`))
+
+        return <li key={i} value={i} style={{fontWeight: 'bold', color: 'black'}} >
+            <Link href={`/quizz?x=${q}`}>{item}</Link>
+        </li>
 
     })
 
