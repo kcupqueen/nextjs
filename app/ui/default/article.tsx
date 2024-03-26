@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation'
 import React from 'react';
 
 
+const maxAnsThreshold = 5
+
 export type ArticleData = {
     _id: string;
     level: number,
@@ -37,6 +39,8 @@ const filterArticleByLevel = (list: ArticleData[], filterLevel: number) => {
 }
 
 const getNextLevel = (currentLevel: number, ok: boolean) => {
+    // todo fixme
+    return currentLevel
     if (ok) {
         return currentLevel + 50
     } else {
@@ -62,16 +66,16 @@ function Article({list, filterLevel}: { list: ArticleData[], filterLevel: number
             isCorrect: ok,
             level: article.level
         }])
-        console.log(`cnt of userAnsInfos`, userAnsInfos.length)
+    }
 
-        if (userAnsInfos?.length >= 5) { // todo limit by configured threshold
-            // route to /quizz/judgement page ？？？
+    useEffect(() => {
+        console.log(`current length`, userAnsInfos?.length, maxAnsThreshold)
+        if (userAnsInfos?.length >= maxAnsThreshold) {
             console.log(`user ans list is`, JSON.stringify(userAnsInfos))
-
             localStorage.setItem('userAnsInfos', JSON.stringify(userAnsInfos))
             router.push('/quizz/judgement')
         }
-    }
+    }, [router, userAnsInfos]);
 
     const data = filterArticleByLevel(list, nextLevel);
     if (!data) {
@@ -88,7 +92,7 @@ function Article({list, filterLevel}: { list: ArticleData[], filterLevel: number
             <div
                 className="bg-white rounded-lg shadow-md p-4 md:p-24 m-4 md:m-8 flex flex-col items-center justify-center w-full">
                 <h2 className="text-xl font-semibold">{title}</h2>
-                <p className="text-gray-700 mt-2">{formatContent(content)}</p>
+                <p className="text-black-700 mt-2">{formatContent(content)}</p>
                 <p className="text-gray-700 mt-2">Level: {data.level}</p>
             </div>
             <div>

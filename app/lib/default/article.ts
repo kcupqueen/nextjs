@@ -18,6 +18,20 @@ export async function fetchArticles(): Promise<any[]> {
         });
     });
     const rows = await a;
-    console.log(`rows`, rows)
+    debugSize(rows);
+
     return rows;
+}
+
+function debugSize(rows: any[]) {
+    // Convert rows to a JSON string
+    const rowsString = JSON.stringify(rows);
+
+    // Calculate the size in bytes
+    const sizeInBytes = Buffer.byteLength(rowsString, 'utf8');
+
+    // Convert the size to kilobytes
+    const sizeInKilobytes = sizeInBytes / 1024;
+
+    console.log(`Data size: ${sizeInKilobytes} KB`);
 }
