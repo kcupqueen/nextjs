@@ -9,7 +9,7 @@ const mockArticleData = {
     correctAnsIdx: 0, // suppose the correct answer is the first one
 };
 
-function GenerateMockDate() {
+async function GenerateMockDate() {
     // gen 50 article data
     const data = []
     const base = {...mockArticleData}

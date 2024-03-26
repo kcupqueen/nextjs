@@ -1,7 +1,7 @@
 'use client';
 import {ChangeEvent, useEffect, useState} from 'react';
 import { useRouter } from 'next/navigation'
-
+import React from 'react';
 
 
 export type ArticleData = {
@@ -86,9 +86,9 @@ function Article({list, filterLevel}: { list: ArticleData[], filterLevel: number
     return (
         <>
             <div
-                className="bg-white rounded-lg shadow-md p-4 md:p-6 m-4 md:m-8 flex flex-col items-center justify-center w-full">
+                className="bg-white rounded-lg shadow-md p-4 md:p-24 m-4 md:m-8 flex flex-col items-center justify-center w-full">
                 <h2 className="text-xl font-semibold">{title}</h2>
-                <p className="text-gray-700 mt-2">{content}</p>
+                <p className="text-gray-700 mt-2">{formatContent(content)}</p>
                 <p className="text-gray-700 mt-2">Level: {data.level}</p>
             </div>
             <div>
@@ -100,7 +100,14 @@ function Article({list, filterLevel}: { list: ArticleData[], filterLevel: number
 
     );
 }
-
+function formatContent(content: string) {
+    return content.split('\n').map((line, index) => (
+        <React.Fragment key={index}>
+            {line}
+            <br />
+        </React.Fragment>
+    ));
+}
 
 const RadioGroup = ({article, onButtonClick}: {
     article: ArticleData,
