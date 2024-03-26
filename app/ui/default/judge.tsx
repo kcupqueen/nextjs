@@ -18,7 +18,7 @@ function Judge() {
         }
         setIsDataLoaded(true);
 
-    }, []);
+    }, [router]);
 
     if (!isDataLoaded) {
         return null; // or a loading spinner
