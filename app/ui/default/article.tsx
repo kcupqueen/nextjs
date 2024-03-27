@@ -48,12 +48,14 @@ const getNextLevel = (currentLevel: number, ok: boolean) => {
     }
 }
 
+
 function Article({list, filterLevel}: { list: ArticleData[], filterLevel: number}) {
     const router = useRouter()
 
     // client next Level
     const [nextLevel, setLevelState] = useState(filterLevel);
     const [userAnsInfos, setUserAnsInfos] = useState([] as UserAnswerInfo[]);
+    const [showAlert, setShowAlert] = useState(false); // Add this line
 
     function handleSubmitAns(option: number, ok: boolean, article: ArticleData) {
         // get user selected option
@@ -66,10 +68,16 @@ function Article({list, filterLevel}: { list: ArticleData[], filterLevel: number
             isCorrect: ok,
             level: article.level
         }])
+        setShowAlert(true); // Add this line
+        setTimeout(() => {
+            setShowAlert(false);
+        }, 1000);
     }
 
     useEffect(() => {
         console.log(`current length`, userAnsInfos?.length, maxAnsThreshold)
+        // show alert here
+
         if (userAnsInfos?.length >= maxAnsThreshold) {
             console.log(`user ans list is`, JSON.stringify(userAnsInfos))
             localStorage.setItem('userAnsInfos', JSON.stringify(userAnsInfos))
@@ -99,7 +107,10 @@ function Article({list, filterLevel}: { list: ArticleData[], filterLevel: number
                 <RadioGroup article={data} onButtonClick={handleSubmitAns}
                 />
             </div>
-
+            <div>
+                <ProgressBar current={userAnsInfos.length} total={maxAnsThreshold}/>
+            </div>
+            {showAlert && <SubmitAlert userAnsInfos={userAnsInfos} />} {/* Modify this line */}
         </>
 
     );
@@ -113,11 +124,38 @@ function formatContent(content: string) {
     ));
 }
 
+
+const ProgressBar = ({current, total}: { current: number, total: number }) => {
+    const progress = (current / total) * 100;
+
+    return (
+        <>
+            <progress className="progress progress-accent w-56" value={progress} max="100"></progress>
+        </>
+    );
+}
+
+const SubmitAlert = ({userAnsInfos}: { userAnsInfos: UserAnswerInfo[] }) => {
+    const order = userAnsInfos.length
+    return (
+        <>
+            <div role="alert" className="alert alert-success">
+                <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none"
+                     viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span>Answer {order} has submitted</span>
+            </div>
+        </>
+    )
+}
+
 const RadioGroup = ({article, onButtonClick}: {
     article: ArticleData,
     onButtonClick: (option: number, ok: boolean, article: ArticleData) => void
 }) => {
-    const [selectedOption, setSelectedOption] = useState('');
+    const [selectedOption, setSelectedOption] = useState('0');
     let {question, answers, correctAnsIdx, level,} = article;
 
     const HandleOptionChange = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -147,14 +185,12 @@ const RadioGroup = ({article, onButtonClick}: {
                 {radioButtons}
             </div>
             <p className="text-gray-500">Selected: {selectedOption}</p>
-            <div>
-
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <button
                     onClick={() => onButtonClick(parseInt(selectedOption), parseInt(selectedOption) === correctAnsIdx, article)}
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded">
-                    Button
+                    Submit
                 </button>
-
             </div>
         </div>
     );
